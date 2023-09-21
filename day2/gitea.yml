@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    field.cattle.io/description: Yet another local git instance
+  name: local-gitea
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: local-gitea
+  template:
+    metadata:
+      labels:
+        app: local-gitea
+    spec:
+      containers:
+      - image: gitea/gitea:latest-rootless
+        imagePullPolicy: Always
+        name: local-gitea
+        ports:
+        - containerPort: 3000
+          name: web
+          protocol: TCP
+        - containerPort: 2222
+          name: ssh
+          protocol: TCP
+        volumeMounts:
+          - name: local-gitea-pvc
+            mountPath: "/data"
+            subPath: "vol"
+          - name: local-gitea-pvc
+            mountPath: "/var/lib/gitea"
+            subPath: "data"
+          - name: local-gitea-pvc
+            mountPath: "/etc/gitea"
+            subPath: "config"
+      volumes:
+        - name: local-gitea-pvc
+          persistentVolumeClaim:
+            claimName: local-gitea-pvc
+        - name: local-gitea-tmpfs
+          emptyDir: {}
+        - name: local-gitea-hp
+          hostPath:
+            path: /appl/gitea
+
+
+
