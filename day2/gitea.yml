@@ -4,7 +4,7 @@ metadata:
   annotations:
     field.cattle.io/description: Yet another local git instance
   name: local-gitea
-  namespace: default
+  namespace: k8s-demo
 spec:
   replicas: 1
   strategy:
@@ -30,24 +30,20 @@ spec:
           name: ssh
           protocol: TCP
         volumeMounts:
-          - name: local-gitea-pvc
+          - name: vol
             mountPath: "/data"
-            subPath: "vol"
-          - name: local-gitea-pvc
+          - name: data
             mountPath: "/var/lib/gitea"
-            subPath: "data"
-          - name: local-gitea-pvc
+          - name: config
             mountPath: "/etc/gitea"
-            subPath: "config"
       volumes:
-        - name: local-gitea-pvc
+        - name: vol
           persistentVolumeClaim:
-            claimName: local-gitea-pvc
-        - name: local-gitea-tmpfs
-          emptyDir: {}
-        - name: local-gitea-hp
-          hostPath:
-            path: /appl/gitea
-
-
+            claimName: local-gitea-vol
+        - name: data
+          persistentVolumeClaim:
+            claimName: local-gitea-data
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-gitea-config
 
