@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wikijs-cm
+  namespace: k8s-demo
+  annotations:
+    field.cattle.io/description: Wikijs env variables
+data:
+  PUID: "1000"
+  PGID: "1000"
+  DB_TYPE: sqlite
